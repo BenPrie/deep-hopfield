@@ -1,0 +1,23 @@
+Hopfield:
+{[18.4,.510],[18.06,.436],[17.36,.509]}
+
+
+
+python -u LIC_TCM/eval.py --checkpoint /Users/jessegill/Desktop/MLP_CW4/output/HopLayerN32L05/0.0545_checkpoint.pth.tar --data /Users/jessegill/Desktop/MLP_CW4/data --N 32 && 
+average_PSNR: 18.40dB
+average_MS-SSIM: 3.9175
+average_Bit-rate: 0.510 bpp
+
+
+python -u LIC_TCM/eval.py --checkpoint /Users/jessegill/Desktop/MLP_CW4/output/HopLayerN32L013/0.01345_checkpoint.pth.tar --data /Users/jessegill/Desktop/MLP_CW4/data --N 32 && 
+average_PSNR: 18.06dB
+average_MS-SSIM: 3.8808
+average_Bit-rate: 0.436 bpp
+
+
+python -u LIC_TCM/eval.py --checkpoint /Users/jessegill/Desktop/MLP_CW4/output/HopLayerN32L025/0.02545_checkpoint.pth.tar --data /Users/jessegill/Desktop/MLP_CW4/data --N 32 --hopfield True 
+average_PSNR: 17.36dB
+average_MS-SSIM: 3.8515
+average_Bit-rate: 0.509 bpp
+
+python -u LIC_TCM/eval.py --checkpoint /Users/jessegill/Desktop/MLP_CW4/output/HopLayerN64L05/0.0545_checkpoint.pth.tar --data /Users/jessegill/Desktop/MLP_CW4/data --N 64 --hopfield True 
