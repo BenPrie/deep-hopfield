@@ -1,8 +1,11 @@
 # Imports as always.
 import os
 import re
+from copy import deepcopy
 
-from torch.utils.data import Dataset, DataLoader
+import numpy as np
+
+from torch.utils.data import Dataset
 from torchvision import transforms
 
 from PIL import Image
@@ -77,7 +80,7 @@ class ISICDataset(Dataset):
 
         # Apply damage (to input only).
         if self.damage:
-            input_image = self.damage_image(input_path)
+            input_image = self.damage_image(input_image)
 
         return input_image, target_mask
 
@@ -92,9 +95,18 @@ class ISICDataset(Dataset):
         return image
 
     def damage_image(self, image, damage_method='random-corrupt'):
-        # Damage degree should be in (0,1) to express the proportion of the image exposed to damage.
-        assert 0 < self.damage_degree < 1, 'Damage degree should be in (0, 1).'
-
         # Damage by random corruption -- zeroing random pixels.
         if damage_method == 'random-corrupt':
-            pass
+            masked_image = deepcopy(image)
+            _, height, _ = image.shape
+
+            # Randomly zero damage_degree% of pixels to damage. We consider all channels together -- damaging pixels.
+            zero_indices = np.random.choice(height * height, int(height * height * self.damage_degree), replace=False)
+            for idx in zero_indices:
+                x, y = np.divmod(idx, height)
+                masked_image[:, x, y] = 0
+
+            return masked_image
+
+        else:
+            return image
