@@ -1,19 +1,9 @@
 # Imports as always.
-import os
-import re
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-import time
-from tqdm.notebook import tqdm
-
 import torch
 from torch import nn
 
-import torchvision
-from torchvision import transforms
-
-from PIL import Image
+from segmentation_models_pytorch import UnetPlusPlus
+from segmentation_models_pytorch.losses import DiceLoss
 
 class DownConv2(nn.Module):
     def __init__(self, n_in_channels, n_out_channels, kernel_size, activation_func):
@@ -212,3 +202,25 @@ class ImageSegmentationCNN(nn.Module):
         x = self.uc1(x, pool1_indices, shape1)
 
         return x
+
+
+class SegmentationModel(nn.Module):
+    def __init__(self):
+        super(SegmentationModel, self).__init__()
+
+        self.model = UnetPlusPlus(
+            encoder_name='timm-efficientnet-b0',
+            encoder_weights='imagenet',
+            in_channels=3,
+            classes=1,
+            activation=None
+        )
+
+    def forward(self, x, y_true):
+        y_pred = self.model(x)
+
+        if y_true is not None:
+            loss = DiceLoss(mode='binary')(y_pred, y_true)
+            return y_pred, loss
+
+        return y_pred
